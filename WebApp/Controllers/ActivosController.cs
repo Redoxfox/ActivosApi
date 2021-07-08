@@ -31,7 +31,7 @@ namespace WebApp.Controllers
         [HttpGet("{Id:int}")]
         public async Task<IActionResult> GetActivos(int Id)
         {
-            var ShowItem = await _context.TipoActivoTis.FirstOrDefaultAsync(item => item.Id==Id);
+            var ShowItem = await _context.TipoActivoTis.FirstOrDefaultAsync(item => item.Id == Id);
 
             if (ShowItem == null)
             {
@@ -44,9 +44,9 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddActivos([FromBody]TipoActivoTi tipoActivoTi)
+        public async Task<IActionResult> AddActivos([FromBody] TipoActivoTi tipoActivoTi)
         {
-            
+
 
             if (tipoActivoTi == null)
             {
@@ -54,13 +54,75 @@ namespace WebApp.Controllers
             }
 
 
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
             await _context.AddAsync(tipoActivoTi);
             await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPut("{Id}")]
+        public async Task<IActionResult> UpdateActivo(int Id , TipoActivoTi tipoActivoTi)
+        {
+           /* if (Id == tipoActivoTi.Id)
+            {
+                _context.Entry(tipoActivoTi).State = EntityState.Modified;
+
+                await _context.SaveChangesAsync();
+
+                return Ok();
+            }
+
+            return BadRequest();*/
+
+            if (Id != tipoActivoTi.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(tipoActivoTi).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (tipoActivoTi.Id==0)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete("Id")]
+        public async Task<IActionResult> DeleteActivo(int Id, [FromQuery] TipoActivoTi tipoActivoTi)
+        {
+
+
+            if (tipoActivoTi == null)
+            {
+                return BadRequest();
+            }
+            if (Id == tipoActivoTi.Id)
+            {
+
+                var tipoAcvoTi = _context.TipoActivoTis.Where(item => Id == item.Id).FirstOrDefault();
+                _context.Remove(tipoAcvoTi);
+                await _context.SaveChangesAsync();
+
+                return Ok();
+            }
 
             return Ok();
         }
