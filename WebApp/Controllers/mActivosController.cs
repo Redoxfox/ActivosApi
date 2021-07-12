@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,19 +10,20 @@ namespace WebApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ActivosController : ControllerBase
+    public class mActivosController : Controller
     {
+
         private readonly ActivosTIContext _context;
 
-        public ActivosController(ActivosTIContext context)
+        public mActivosController(ActivosTIContext context)
         {
             _context = context;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetActivos()
+        public async Task<IActionResult> GetmActivos()
         {
-            var ShowList = await _context.TipoActivoTis.OrderBy(item => item.Nombre).ToListAsync();
+            var ShowList = await _context.Activos.OrderBy(item => item.Nombre).ToListAsync();
 
             return Ok(ShowList);
         }
@@ -31,7 +31,7 @@ namespace WebApp.Controllers
         [HttpGet("{Id:int}")]
         public async Task<IActionResult> GetActivos(int Id)
         {
-            var ShowItem = await _context.TipoActivoTis.FirstOrDefaultAsync(item => item.Id == Id);
+            var ShowItem = await _context.Activos.FirstOrDefaultAsync(item => item.Id == Id);
 
             if (ShowItem == null)
             {
@@ -44,11 +44,11 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddActivos([FromBody] TipoActivoTi tipoActivoTi)
+        public async Task<IActionResult> mAddActivos([FromBody] Activo Activo)
         {
 
 
-            if (tipoActivoTi == null)
+            if (Activo == null)
             {
                 return BadRequest(ModelState);
             }
@@ -59,22 +59,22 @@ namespace WebApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _context.AddAsync(tipoActivoTi);
+            await _context.AddAsync(Activo);
             await _context.SaveChangesAsync();
 
             return Ok();
         }
 
         [HttpPut("{Id}")]
-        public async Task<IActionResult> UpdateActivo(int Id , TipoActivoTi tipoActivoTi)
+        public async Task<IActionResult> UpdateActivo(int Id, Activo Activo)
         {
-           
-            if (Id != tipoActivoTi.Id)
+
+            if (Id != Activo.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(tipoActivoTi).State = EntityState.Modified;
+            _context.Entry(Activo).State = EntityState.Modified;
 
             try
             {
@@ -82,7 +82,7 @@ namespace WebApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (tipoActivoTi.Id==0)
+                if (Activo.Id == 0)
                 {
                     return NotFound();
                 }
@@ -100,7 +100,7 @@ namespace WebApp.Controllers
         {
             try
             {
-                var tipoAcvoTi = _context.TipoActivoTis.Where(item => Id == item.Id).FirstOrDefault();
+                var tipoAcvoTi = _context.Activos.Where(item => Id == item.Id).FirstOrDefault();
                 _context.Remove(tipoAcvoTi);
                 await _context.SaveChangesAsync();
             }
@@ -111,5 +111,6 @@ namespace WebApp.Controllers
 
             return Ok();
         }
+  
     }
 }
