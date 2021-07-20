@@ -30,7 +30,7 @@ namespace WebApp.Controllers
         [HttpGet("{Id:int}")]
         public async Task<IActionResult> GetConsumibles(int Id)
         {
-            var ShowItem = await _context.Activos.FirstOrDefaultAsync(item => item.Id == Id);
+            var ShowItem = await _context.Consumibles.FirstOrDefaultAsync(item => item.Id == Id);
 
             if (ShowItem == null)
             {
@@ -43,11 +43,11 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddConsumibles([FromBody] Activo Activo)
+        public async Task<IActionResult> AddConsumibles([FromBody] Consumible consumible)
         {
 
 
-            if (Activo == null)
+            if (consumible == null)
             {
                 return BadRequest(ModelState);
             }
@@ -58,22 +58,22 @@ namespace WebApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _context.AddAsync(Activo);
+            await _context.AddAsync(consumible);
             await _context.SaveChangesAsync();
 
             return Ok();
         }
 
         [HttpPut("{Id}")]
-        public async Task<IActionResult> UpdateConsumibles(int Id, Activo Activo)
+        public async Task<IActionResult> UpdateConsumibles(int Id, Consumible consumible)
         {
 
-            if (Id != Activo.Id)
+            if (Id != consumible.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(Activo).State = EntityState.Modified;
+            _context.Entry(consumible).State = EntityState.Modified;
 
             try
             {
@@ -81,7 +81,7 @@ namespace WebApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (Activo.Id == 0)
+                if (consumible.Id == 0)
                 {
                     return NotFound();
                 }
@@ -99,7 +99,7 @@ namespace WebApp.Controllers
         {
             try
             {
-                var tipoAcvoTi = _context.Activos.Where(item => Id == item.Id).FirstOrDefault();
+                var tipoAcvoTi = _context.Consumibles.Where(item => Id == item.Id).FirstOrDefault();
                 _context.Remove(tipoAcvoTi);
                 await _context.SaveChangesAsync();
             }

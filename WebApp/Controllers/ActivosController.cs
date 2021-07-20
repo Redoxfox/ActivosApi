@@ -28,6 +28,76 @@ namespace WebApp.Controllers
             return Ok(ShowList);
         }
 
+        [HttpGet("TipoActivos")]
+
+        public async Task<IActionResult> GetATipoActivos()
+        {
+        
+            var ShowItem = await _context.CategoriaTis.ToListAsync();
+            var TipoActivo_CategoriaTI = await _context.CategoriaTiTpas.OrderBy(item => item.IdTipoActivo).ToListAsync();
+            var TipoActivo = await _context.TipoActivoTis.OrderBy(item => item.Id).ToListAsync();
+
+            var categoria_tipoActivo = from itemActivo in ShowItem
+                                       join itemCategoria in TipoActivo_CategoriaTI
+                         on itemActivo.Id equals itemCategoria.IdCategoriaTi
+                         select new
+                         {
+                             Id = itemCategoria.IdTipoActivo,
+                             Nombre = itemActivo.Nombre
+                         };
+
+            //var Activos = await _context.Activos.OrderBy(item => item.IdTipo).ToListAsync();
+            var data_activos = from itemActivo in TipoActivo
+                               join itemCategoria in categoria_tipoActivo
+                                on itemActivo.Id equals itemCategoria.Id
+                                select new
+                                {
+                                    Id = itemCategoria.Id,
+                                    Nombre = itemActivo.Nombre
+                                };
+
+
+            /*if (Tipo == "Consumibles")
+           {
+               var Consumibles = await _context.Consumibles.OrderBy(item => item.IdTipo).ToListAsync();
+               var data_consumibles = from itemActivo in Consumibles
+                                      join itemCategoria in categoria_tipoActivo
+                                  on itemActivo.IdTipo equals itemCategoria.Id
+                                  select new
+                                  {
+                                      Id = itemActivo.Id,
+                                      NombreTipoActivo = itemCategoria.Nombre,
+                                      NombreInventario = itemActivo.Nombre
+                                  };
+           }
+
+           if (Tipo == "Perifericos")
+           {
+               var Perifericos = await _context.Perifericos.OrderBy(item => item.IdTipo).ToListAsync();
+               var data_activos = from itemActivo in Perifericos
+                                  join itemCategoria in categoria_tipoActivo
+                                  on itemActivo.IdTipo equals itemCategoria.Id
+                                  select new
+                                  {
+                                      Id = itemActivo.Id,
+                                      NombreTipoActivo = itemCategoria.Nombre,
+                                      NombreInventario = itemActivo.Nombre,
+                                      Serial = itemActivo.Serial
+                                  };
+           }*/
+
+
+            if (ShowItem == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(data_activos);
+            }
+        }
+
+
         [HttpGet("{Id:int}")]
         public async Task<IActionResult> GetActivos(int Id)
         {

@@ -18,6 +18,8 @@ namespace WebApp.Data
         }
 
         public virtual DbSet<Activo> Activos { get; set; }
+        public virtual DbSet<CategoriaTi> CategoriaTis { get; set; }
+        public virtual DbSet<CategoriaTiTpa> CategoriaTiTpas { get; set; }
         public virtual DbSet<Consumible> Consumibles { get; set; }
         public virtual DbSet<Periferico> Perifericos { get; set; }
         public virtual DbSet<TipoActivoTi> TipoActivoTis { get; set; }
@@ -31,7 +33,7 @@ namespace WebApp.Data
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                //optionsBuilder.UseSqlServer("Server=localhost;Database=ActivosTI;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=localhost;Database=ActivosTI;Trusted_Connection=True");
             }
         }
 
@@ -81,6 +83,24 @@ namespace WebApp.Data
                     .WithMany(p => p.Activos)
                     .HasForeignKey(d => d.IdTipo)
                     .HasConstraintName("FK_Activo_TipoActivoTI");
+            });
+
+            modelBuilder.Entity<CategoriaTi>(entity =>
+            {
+                entity.ToTable("CategoriaTI");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<CategoriaTiTpa>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("CategoriaTI_TPA");
+
+                entity.Property(e => e.IdCategoriaTi).HasColumnName("IdCategoriaTI");
             });
 
             modelBuilder.Entity<Consumible>(entity =>
