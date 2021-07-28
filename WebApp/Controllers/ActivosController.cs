@@ -30,14 +30,15 @@ namespace WebApp.Controllers
 
         [HttpGet("TipoActivos")]
 
-        public async Task<IActionResult> GetATipoActivos()
+        public async Task<IActionResult> GetATipoActivos(string TipoActiv_o)
         {
-        
             var ShowItem = await _context.CategoriaTis.ToListAsync();
-            var TipoActivo_CategoriaTI = await _context.CategoriaTiTpas.OrderBy(item => item.IdTipoActivo).ToListAsync();
-            var TipoActivo = await _context.TipoActivoTis.OrderBy(item => item.Id).ToListAsync();
+            if (TipoActiv_o == "Activos") { 
+                
+                var TipoActivo_CategoriaTI = await _context.CategoriaTiTpas.OrderBy(item => item.IdTipoActivo).ToListAsync();
+                var TipoActivo = await _context.TipoActivoTis.OrderBy(item => item.Id).ToListAsync();
 
-            var categoria_tipoActivo = from itemActivo in ShowItem
+                var categoria_tipoActivo = from itemActivo in ShowItem
                                        join itemCategoria in TipoActivo_CategoriaTI
                          on itemActivo.Id equals itemCategoria.IdCategoriaTi
                          select new
@@ -46,8 +47,8 @@ namespace WebApp.Controllers
                              Nombre = itemActivo.Nombre
                          };
 
-            //var Activos = await _context.Activos.OrderBy(item => item.IdTipo).ToListAsync();
-            var data_activos = from itemActivo in TipoActivo
+                //var Activos = await _context.Activos.OrderBy(item => item.IdTipo).ToListAsync();
+                var data_activos = from itemActivo in TipoActivo
                                join itemCategoria in categoria_tipoActivo
                                 on itemActivo.Id equals itemCategoria.Id
                                 select new
@@ -56,7 +57,17 @@ namespace WebApp.Controllers
                                     Nombre = itemActivo.Nombre
                                 };
 
+                return Ok(data_activos);
+            }
 
+            if (ShowItem == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok();
+            }
             /*if (Tipo == "Consumibles")
            {
                var Consumibles = await _context.Consumibles.OrderBy(item => item.IdTipo).ToListAsync();
@@ -87,14 +98,7 @@ namespace WebApp.Controllers
            }*/
 
 
-            if (ShowItem == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(data_activos);
-            }
+
         }
 
 
